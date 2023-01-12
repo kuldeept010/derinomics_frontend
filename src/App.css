@@ -1,38 +1,77 @@
-.App {
-  text-align: center;
+* {
+  font-family: 'Montserrat', sans-serif;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.cs-label {
+  color: #1677ff;
+  font-size: 13px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.ant-select-selection-placeholder {
+  color: rgba(0, 0, 0, 0.7) !important;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.ant-select-multiple .ant-select-selection-item-remove>.anticon,
+.ant-select-item-option-state span.anticon.anticon-check {
+  vertical-align: middle;
 }
 
-.App-link {
-  color: #61dafb;
+.cs-ant-select.ant-select-multiple .ant-select-selection-overflow {
+  flex-wrap: nowrap !important;
+  overflow: clip !important;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+ul.app-sidebar {
+  background: none;
+}
+
+ul.app-sidebar>li.ant-menu-item {
+  background-color: transparent;
+  color: #fff;
+}
+
+ul.app-sidebar>li.ant-menu-item:hover {
+  background-color: #0441c3 !important;
+  color: #fff !important;
+}
+
+ul.app-sidebar>li.ant-menu-item.ant-menu-item-selected {
+  background-color: #0441c3;
+}
+
+ul.app-sidebar>li.ant-menu-item>svg.ant-menu-item-icon {
+  font-size: 16px;
+  height: auto;
+}
+
+ul.app-sidebar>li.ant-menu-item a {
+  text-decoration: none;
+}
+
+li.ant-menu-item:has(span.ant-menu-title-content>a.ant-menu-active-child) {
+  background-color: #0441c3 !important;
+  color: #fff;
+}
+
+.cs-card {
+  border-radius: 8px;
+  background: #0257fa;
+  color: #fff;
+  min-height: 200px;
+  font-size: 16px;
+  padding: 10px;
+  position: relative;
+
+}
+
+.cs-card-title {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.cs-body {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }

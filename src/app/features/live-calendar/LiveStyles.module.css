@@ -1,0 +1,7 @@
+.ClickableText:hover {
+  text-decoration: underline;
+}
+
+.ClickableText {
+  cursor: pointer;
+}
