@@ -22,7 +22,7 @@ const SidebarItems = [{
 }
 ]
 
-export default function Sidebar() {
+export default function Sidebar({ setShowTrigger, showTrigger, setIsMobile, isMobile }) {
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -37,18 +37,23 @@ export default function Sidebar() {
 
   return (
     <Sider
+      breakpoint="lg"
+      collapsedWidth={0}
       style={{
-        overflow: 'auto',
-        height: '100vh',
-        position: 'fixed',
-        left: 0,
-        top: 0,
-        bottom: 0,
-        padding: "10px",
-        background: "#0257fa"
+        // height: '100vh',
+        background: "#0257fa",
+        padding: !showTrigger ? "10px" : "0"
+      }}
+      collapsed={showTrigger}
+      trigger={null}
+      onBreakpoint={(point) => {
+        if (showTrigger !== point) {
+          setShowTrigger(point);
+        }
+        setIsMobile(point);
       }}
     >
       <div style={{ margin: 16, color: "#fff" }}>DERINOMICS FINANCIAL Pvt. Ltd.</div>
-      <Menu mode="inline" onClick={({ key }) => navigate(key)} className="app-sidebar" selectedKeys={[getBasepath(location.pathname)]} items={SidebarItems} />
+      <Menu mode="inline" onClick={({ key }) => { navigate(key); if (isMobile && !showTrigger) { setShowTrigger(true); }} } className="app-sidebar" selectedKeys={[getBasepath(location.pathname)]} items={SidebarItems} />
     </Sider>);
 }

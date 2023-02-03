@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Button, Select } from 'antd';
+import { Select } from 'antd';
 import { useDispatch, useSelector } from "react-redux";
 import { getCountries, getEventNamesByCountry, getCalendarEvents } from "./calendarSlice";
 import CorrelationTable from "./CorrelationTable";
@@ -15,7 +15,7 @@ export default function Calendar() {
   const loadingEvents = useSelector(state => state.calendar.loadingEvents);
 
   const [selectedCountry, setSelectedCountry] = useState(null);
-  const [selectedEvents, setSelectedEvents] = useState([]);
+  const [selectedEvent, setSelectedEvent] = useState(null);
 
   useEffect(() => {
     dispatch(getCountries());
@@ -25,14 +25,19 @@ export default function Calendar() {
     if (selectedCountry) {
       dispatch(getEventNamesByCountry(selectedCountry));
     }
-    setSelectedEvents([]);
+    setSelectedEvent(null);
   }, [dispatch, selectedCountry]);
 
-  const getEvents = () => {
-    if (selectedEvents && selectedEvents.length > 0) {
-      dispatch(getCalendarEvents(selectedEvents))
+  useEffect(() => {
+    const getEvents = () => {
+      if (selectedEvent) {
+        dispatch(getCalendarEvents(selectedEvent))
+      }
     }
-  }
+    if (selectedEvent) {
+      getEvents();
+    }
+  }, [selectedEvent, dispatch])
 
   return (
     <div>
@@ -53,35 +58,34 @@ export default function Calendar() {
                 placeholder="Select Country / Zone" onChange={(v) => setSelectedCountry(v)} />
             </div>
           </div>
-          <div className="col-sm-12 col-md-6 col-lg-6 col-xl-4">
+          <div className="col-sm-12 col-md-8 col-lg-6 col-xl-4">
             <div>
               <div className="cs-label">Event</div>
               <Select
                 className="w-100 cs-ant-select"
                 placeholder="Select Events"
-                mode="multiple"
                 loading={loadingEvents}
                 disabled={selectedCountry === null}
-                value={selectedEvents}
+                value={selectedEvent}
                 showSearch
                 filterOption={(input, option) =>
                   (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
                 }
                 autoClearSearchValue={false}
-                onChange={(v) => setSelectedEvents(v)}
+                onChange={(v) => setSelectedEvent(v)}
                 options={events.map(event => ({ label: `${event.name} - (${event.calendarEvents})`, value: event.id }))}
               />
             </div>
           </div>
-          <div className="col-sm-6 col-md-2 col-lg-2 col-xl-2">
+          {/* <div className="col-sm-6 col-md-2 col-lg-2 col-xl-2">
             <div>
-              <Button type="primary" onClick={getEvents} disabled={selectedEvents.length === 0}>Get Data</Button>
+              <Button type="primary" onClick={getEvents} disabled={selectedEvent.length === 0}>Get Data</Button>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
-      <CorrelationTable selectedEvents={selectedEvents} />
-      <EventsDataTable />
+      <CorrelationTable selectedEvent={selectedEvent} />
+      <EventsDataTable selectedEvent={selectedEvent}  />
     </div>
   )
 }

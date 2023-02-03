@@ -10,6 +10,7 @@ const calendarSlice = createSlice({
     loadingEvents: false,
     loadingCalendar: false,
     calendarEvents: [],
+    loadingCorrelations: false,
   },
   reducers: {},
   extraReducers: builder => {
@@ -35,6 +36,11 @@ const calendarSlice = createSlice({
         state.calendarEvents = action.payload
         state.loadingCalendar = false
       })
+      .addCase(getAllEventsCorrelations.pending, (state, action) => {
+        state.loadingCorrelations = true
+      }).addCase(getAllEventsCorrelations.fulfilled, (state, action) => {
+        state.loadingCorrelations = false
+      })
   }
 })
 
@@ -53,8 +59,12 @@ export const getCountries = createAsyncThunk('calendar/getCountries', async () =
 
 export const getEventNamesByCountry = createAsyncThunk('calendar/getEventsByCountry', async (countryId) => {
   const response = await axios({
-    url: `/api/v1/events?country=${countryId}`,
+    url: `/api/v1/events`,
     method: 'GET',
+    params: {
+      country: countryId,
+      show_at_home: 1
+    },
     baseURL: process.env.REACT_APP_BASE_URL,
     headers: {
       Accept: "application/json",
@@ -88,6 +98,19 @@ export const updateEvent = createAsyncThunk('calendar/updateEvent', async (formD
       "Content-Type": "application/x-www-form-urlencoded"
     },
     data: formData
+  });
+  return response.data;
+})
+
+export const getAllEventsCorrelations = createAsyncThunk('calendar/getEventCorrelations', async (eventId) => {
+  const response = await axios({
+    url: `/api/v1//events/${eventId}/correlations`,
+    method: 'GET',
+    baseURL: process.env.REACT_APP_BASE_URL,
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
   });
   return response.data;
 })

@@ -19,6 +19,13 @@ const homeSlice = createSlice({
         state.events = action.payload
         state.loadingEvents = false
       })
+      .addCase(getHomeEvents.pending, (state, action) => {
+        state.loadingEvents = true
+      })
+      .addCase(getHomeEvents.fulfilled, (state, action) => {
+        state.events = action.payload
+        state.loadingEvents = false
+      })
   }
 })
 
@@ -37,5 +44,22 @@ export const getEventsByType = createAsyncThunk('home/getEventsByType', async (t
   });
   return response.data;
 });
+
+export const getHomeEvents = createAsyncThunk('home/getHomeEvents', async () => {
+  const response = await axios({
+    url: "/api/v1/events",
+    method: "GET",
+    baseURL: process.env.REACT_APP_BASE_URL,
+    params: {
+      show_at_home: 1
+    },
+    headers: {
+      Accept: "application/json",
+      'Content-Type': 'application/json'
+    }
+  });
+  return response.data;
+})
+
 
 export default homeSlice.reducer;

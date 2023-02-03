@@ -31,14 +31,7 @@ export default function EventDetails() {
     }
   }, [dispatch, eventId]);
 
-  const onAddToHome = () => {
-    setOpenModal(true);
-    if (eventDetails.event_type) {
-      setType(eventDetails.event_type);
-    }
-  }
-
-  const onSave = (isAdd = true) => {
+  const onAddToHome = (isAdd) => {
     setSubmittingForm(true);
     let formData = {
       event_id: eventId,
@@ -51,7 +44,7 @@ export default function EventDetails() {
           message: "Success",
           description: "Event Added to Home Successfully."
         })
-        setOpenModal(false);
+        // setOpenModal(false);
       } else {
         notification.success({
           message: "Success",
@@ -59,6 +52,7 @@ export default function EventDetails() {
         })
         setConfirmModal(false);
       }
+      dispatch(getEventDetails(eventId))
     }).catch((err) => {
       console.log(err);
       notification.error({
@@ -101,7 +95,7 @@ export default function EventDetails() {
                       {eventDetails.show_at_home ? (
                         <Button color="error" onClick={onRemoveFromHome} variant="outlined" disabled={loadingEventDetails} startIcon={<RemoveIcon />} size="small">Remove from Home</Button>
                       ) : (
-                        <Button variant="outlined" disabled={loadingEventDetails} onClick={onAddToHome} startIcon={<AddIcon />} size="small">Add to Home</Button>
+                        <Button variant="outlined" disabled={loadingEventDetails} onClick={() => onAddToHome(true)} startIcon={<AddIcon />} size="small">Add to Home</Button>
                       )}
                     </div>
                   </div>
@@ -171,7 +165,7 @@ export default function EventDetails() {
                   </div>
                   <div className="d-flex align-items-center justify-content-end">
                     {submittingForm ? (<div className="px-2 pt-2"><CircularProgress size={16} /></div>) : ""}
-                    <Button color="primary" disabled={!type || submittingForm} variant="contained" size="small" onClick={onSave}>Save</Button>
+                    <Button color="primary" disabled={!type || submittingForm} variant="contained" size="small">Save</Button>
                   </div>
                 </div>
               </div>
@@ -200,7 +194,7 @@ export default function EventDetails() {
                   </div>
                   <div className="d-flex align-items-center justify-content-end">
                     {submittingForm ? (<div className="px-2 pt-2"><CircularProgress size={16} /></div>) : ""}
-                    <Button color="primary" disabled={submittingForm} variant="contained" size="small" onClick={() => onSave(false)}>Confirm</Button>
+                    <Button color="primary" disabled={submittingForm} variant="contained" size="small" onClick={() => onAddToHome(false)}>Confirm</Button>
                   </div>
                 </div>
               </div>

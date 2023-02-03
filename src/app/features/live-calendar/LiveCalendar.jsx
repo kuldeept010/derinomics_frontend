@@ -47,7 +47,7 @@ export default function LiveCalendar() {
   const loadLive = (pageNo, send = true) => {
     setPage(pageNo);
     let obj = { page: pageNo, ...(send ? { country: selectedCountry, search: search } : {}) }
-    console.log(obj);
+    // console.log(obj);
     dispatch(getLiveCalendar(obj));
   }
 

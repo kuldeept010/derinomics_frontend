@@ -1,11 +1,31 @@
 import { Table } from "antd";
-import React from "react";
-import { useSelector } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import dayjs from "dayjs";
-export default function EventsDataTable() {
+import { getEventDetails } from "../live-calendar/liveCalendarSlice";
 
-  const calendarEvents = useSelector(state => state.calendar.calendarEvents);
-  const loadingCalendar = useSelector(state => state.calendar.loadingCalendar);
+export default function EventsDataTable({ selectedEvent }) {
+
+  const dispatch = useDispatch();
+
+  const [eventHistory, setEventHistory] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const getDetails = () => {
+      setLoading(true);
+      dispatch(getEventDetails(selectedEvent)).unwrap().then(res => {
+        if (res.calendar_events) {
+          setEventHistory(res.calendar_events);
+        }
+      }).catch(err => {
+        console.log(err);
+      }).finally(() => setLoading(false))
+    }
+    if (selectedEvent) {
+      getDetails()
+    }
+  }, [selectedEvent, dispatch])
 
   const columns = [
     {
@@ -35,7 +55,7 @@ export default function EventsDataTable() {
           <div className="col-12">
             <div>
               <div className="cs-label">
-                <h6>Events History</h6>
+                <h6>Event History</h6>
               </div>
             </div>
           </div>
@@ -44,7 +64,7 @@ export default function EventsDataTable() {
       <div className="container-xxl">
         <div className="row">
           <div className="col-12">
-            <Table rowKey="id" loading={loadingCalendar} columns={columns} size="small" dataSource={calendarEvents} scroll={{ y: 400 }} />
+            <Table rowKey="id" loading={loading} columns={columns} size="small" dataSource={eventHistory} scroll={{ y: 400 }} />
           </div>
         </div>
       </div>

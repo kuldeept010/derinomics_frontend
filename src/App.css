@@ -75,3 +75,18 @@ li.ant-menu-item:has(span.ant-menu-title-content>a.ant-menu-active-child) {
   left: 50%;
   transform: translate(-50%, -50%);
 }
+
+.content {
+  padding: 1rem;
+}
+
+@media (min-width: 992px) {
+  .menu {
+    display: none;
+  }
+}
+
+.logo {
+  height: 32px;
+  margin-left: 1rem;
+}

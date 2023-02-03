@@ -1,61 +1,32 @@
 import { Table } from "antd";
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import correlationCoefficientR from "../../../correlation";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllEventsCorrelations } from "./calendarSlice";
 
-export default function CorrelationTable({ selectedEvents }) {
+export default function CorrelationTable({ selectedEvent }) {
 
-  const calendar = useSelector(state => state.calendar.calendarEvents);
-  const events = useSelector(state => state.calendar.events);
+  const loading = useSelector(state => state.calendar.loadingCorrelations);
 
+  const dispatch = useDispatch();
   const [dataSource, setDataSource] = useState([]);
-  const [showError, setShowError] = useState(true);
 
   useEffect(() => {
-    if (selectedEvents && selectedEvents.length === 2) {
-      let dataX = calendar.filter(x => x.event_id === selectedEvents[0] && x.actual !== null).map(y => y.actual);
-      let dataY = calendar.filter(x => x.event_id === selectedEvents[1] && x.actual !== null).map(y => y.actual);
-      console.log(dataX, dataY);
-
-      if (dataX.length && dataY.length) {
-        let correlation = correlationCoefficientR(dataX, dataY);
-        setDataSource([{
-          id: selectedEvents[0],
-          event_name: events.find(x => x.id === selectedEvents[0]).name,
-          correlation: correlation,
-        }, {
-          id: selectedEvents[1],
-          event_name: events.find(x => x.id === selectedEvents[1]).name,
-          correlation: correlation
-        }])
-        setShowError(false);
-      } else {
-        setDataSource([]);
-        setShowError(true);
-      }
-    } else {
-      setDataSource([]);
-      setShowError(true);
+    if (selectedEvent) {
+      dispatch(getAllEventsCorrelations(selectedEvent)).unwrap().then((res) => {
+        setDataSource(res);
+      })
     }
-  }, [events, calendar, selectedEvents])
+  }, [selectedEvent, dispatch])
 
   const columns = [{
     title: "Events",
-    dataIndex: 'event_name',
+    dataIndex: 'event2Name',
     rowSpan: 1
   },
   {
     title: "Correlation",
     dataIndex: "correlation",
-    rowSpan: 2,
-    onCell: (_, index) => {
-      if (index === 0) {
-        return { rowSpan: 2 }
-      }
-      if (index === 1) {
-        return { rowSpan: 0 }
-      }
-    },
+    render: (val) => <span>{val === "NaN" ? "-" : parseFloat(val).toFixed(2)}</span>,
     fixed: 'right',
   }]
 
@@ -65,16 +36,14 @@ export default function CorrelationTable({ selectedEvents }) {
         <div className="row">
           <div className="col-12">
             <div>
-              <div className="cs-label"><h6>Correlation Data <span style={{ color: "red", fontSize: "13px" }}>
-                {showError ? " - Please select any 2 events to calculate Correlation value." : ""}
-              </span></h6></div>
+              <div className="cs-label"><h6>Correlation Data</h6></div>
             </div>
           </div>
         </div>
         <div className="row">
           <div className="col-12">
             <div>
-              <Table size="small" columns={columns} dataSource={dataSource} rowKey="id" />
+              <Table size="small" loading={loading} columns={columns} dataSource={dataSource} rowKey="event2Id" />
             </div>
           </div>
         </div>
