@@ -1,4 +1,4 @@
-import { Table } from "antd";
+import { notification, Table } from "antd";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllEventsCorrelations } from "./calendarSlice";
@@ -14,19 +14,26 @@ export default function CorrelationTable({ selectedEvent }) {
     if (selectedEvent) {
       dispatch(getAllEventsCorrelations(selectedEvent)).unwrap().then((res) => {
         setDataSource(res);
+      }).catch(err => {
+        setDataSource([]);
+        console.log(err);
+        notification.error({
+          message: "Failed to load Correlation",
+          description: err && err.message ? err.message : ""
+        })
       })
     }
   }, [selectedEvent, dispatch])
 
   const columns = [{
     title: "Events",
-    dataIndex: 'event2Name',
+    dataIndex: 'event_name',
     rowSpan: 1
   },
   {
     title: "Correlation",
-    dataIndex: "correlation",
-    render: (val) => <span>{val === "NaN" ? "-" : parseFloat(val).toFixed(2)}</span>,
+    dataIndex: "corr",
+    render: (val) => <span>{val === "NaN" ? "-" : val}</span>,
     fixed: 'right',
   }]
 

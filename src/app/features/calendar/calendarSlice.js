@@ -26,7 +26,7 @@ const calendarSlice = createSlice({
         state.loadingEvents = true
       })
       .addCase(getEventNamesByCountry.fulfilled, (state, action) => {
-        state.events = action.payload.map(x => ({ ...x, calendarEvents: x._count.calendar_events }))
+        state.events = JSON.parse(action.payload.body)
         state.loadingEvents = false
       })
       .addCase(getCalendarEvents.pending, (state, action) => {
@@ -39,6 +39,8 @@ const calendarSlice = createSlice({
       .addCase(getAllEventsCorrelations.pending, (state, action) => {
         state.loadingCorrelations = true
       }).addCase(getAllEventsCorrelations.fulfilled, (state, action) => {
+        state.loadingCorrelations = false
+      }).addCase(getAllEventsCorrelations.rejected, (state, action) => {
         state.loadingCorrelations = false
       })
   }
@@ -59,12 +61,8 @@ export const getCountries = createAsyncThunk('calendar/getCountries', async () =
 
 export const getEventNamesByCountry = createAsyncThunk('calendar/getEventsByCountry', async (countryId) => {
   const response = await axios({
-    url: `/api/v1/events`,
+    url: `/api/v1/events/all/${countryId}`,
     method: 'GET',
-    params: {
-      country: countryId,
-      show_at_home: 1
-    },
     baseURL: process.env.REACT_APP_BASE_URL,
     headers: {
       Accept: "application/json",
@@ -102,11 +100,11 @@ export const updateEvent = createAsyncThunk('calendar/updateEvent', async (formD
   return response.data;
 })
 
-export const getAllEventsCorrelations = createAsyncThunk('calendar/getEventCorrelations', async (eventId) => {
+export const getAllEventsCorrelations = createAsyncThunk('calendar/getEventCorrelations', async ({id, total}) => {
   const response = await axios({
-    url: `/api/v1//events/${eventId}/correlations`,
+    url: `/correlate?eventId=${id}&totalEvents=${total}`,
     method: 'GET',
-    baseURL: process.env.REACT_APP_BASE_URL,
+    baseURL: process.env.REACT_APP_CORRELATE_URL,
     headers: {
       Accept: "application/json",
       "Content-Type": "application/x-www-form-urlencoded"

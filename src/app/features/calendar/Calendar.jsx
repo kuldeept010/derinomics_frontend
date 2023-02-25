@@ -66,14 +66,14 @@ export default function Calendar() {
                 placeholder="Select Events"
                 loading={loadingEvents}
                 disabled={selectedCountry === null}
-                value={selectedEvent}
+                value={selectedEvent ? selectedEvent.id : null}
                 showSearch
                 filterOption={(input, option) =>
                   (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
                 }
                 autoClearSearchValue={false}
-                onChange={(v) => setSelectedEvent(v)}
-                options={events.map(event => ({ label: `${event.name} - (${event.calendarEvents})`, value: event.id }))}
+                onChange={(v) => setSelectedEvent(events.find(x => x.id === v))}
+                options={events.map(event => ({ label: `${event.event_name} - (${event.total})`, value: event.id }))}
               />
             </div>
           </div>
@@ -85,7 +85,7 @@ export default function Calendar() {
         </div>
       </div>
       <CorrelationTable selectedEvent={selectedEvent} />
-      <EventsDataTable selectedEvent={selectedEvent}  />
+      <EventsDataTable selectedEvent={selectedEvent} />
     </div>
   )
 }

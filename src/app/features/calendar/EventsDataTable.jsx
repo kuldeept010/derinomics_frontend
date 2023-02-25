@@ -14,7 +14,7 @@ export default function EventsDataTable({ selectedEvent }) {
   useEffect(() => {
     const getDetails = () => {
       setLoading(true);
-      dispatch(getEventDetails(selectedEvent)).unwrap().then(res => {
+      dispatch(getEventDetails(selectedEvent.id)).unwrap().then(res => {
         if (res.calendar_events) {
           setEventHistory(res.calendar_events);
         }
