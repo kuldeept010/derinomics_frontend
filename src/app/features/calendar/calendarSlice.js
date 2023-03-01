@@ -100,10 +100,16 @@ export const updateEvent = createAsyncThunk('calendar/updateEvent', async (formD
   return response.data;
 })
 
-export const getAllEventsCorrelations = createAsyncThunk('calendar/getEventCorrelations', async ({id, total}) => {
+export const getAllEventsCorrelations = createAsyncThunk('calendar/getEventCorrelations', async ({ event, page = 1, pageSize = 20 }) => {
   const response = await axios({
-    url: `/correlate?eventId=${id}&totalEvents=${total}`,
+    url: `/correlate`,
     method: 'GET',
+    params: {
+      ...event,
+      page: page,
+      pageSize: pageSize,
+      minCorr: 0.70
+    },
     baseURL: process.env.REACT_APP_CORRELATE_URL,
     headers: {
       Accept: "application/json",
